@@ -5,7 +5,7 @@ import {
   useUpdateProfile,
 } from "react-firebase-hooks/auth";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import auth from "../../../firebase.init";
 import Loading from "../Shared/Loading";
 
@@ -20,6 +20,7 @@ const Register = () => {
     handleSubmit,
   } = useForm();
   const [updateProfile, updating, updateError] = useUpdateProfile(auth);
+  const location = useLocation();
 
   const navigate = useNavigate();
   if (GoogleLoading || HookLoading || updating) {
@@ -31,8 +32,9 @@ const Register = () => {
     await updateProfile({ displayName: data.name });
   };
 
+  let from = location.state?.from?.pathname || "/";
   if (user || GoogleUser) {
-    navigate("/");
+    navigate(from, { replace: true });
   }
 
   let signUpError;
