@@ -30,30 +30,68 @@ const Login = () => {
                 placeholder="Your email"
                 className="input input-bordered w-full max-w-xs"
                 {...register("email", {
+                  required: {
+                    value: true,
+                    message: "Email is required",
+                  },
                   pattern: {
-                    value: /[A-Za-z]{3}/,
-                    message: "error message", // JS only: <p>error message</p> TS only support string
+                    value: /\S+@\S+\.\S+/,
+                    message: "Provide a valid email",
                   },
                 })}
-                aria-invalid={errors.firstName ? "true" : "false"}
               />
               <label className="label">
-                <span className="label-text-alt">Alt label</span>
+                {errors.email?.type === "required" && (
+                  <span className="label-text-alt text-red-600">
+                    {errors.email.message}
+                  </span>
+                )}
+                {errors.email?.type === "pattern" && (
+                  <span className="label-text-alt text-red-600">
+                    {errors.email.message}
+                  </span>
+                )}
               </label>
             </div>
 
-            <input />
-            {errors.firstName?.type === "required" && (
-              <p role="alert">First name is required</p>
-            )}
+            <div className="form-control w-full max-w-xs">
+              <label className="label">
+                <span className="label-text">Password</span>
+              </label>
+              <input
+                type="password"
+                placeholder="Password"
+                className="input input-bordered w-full max-w-xs"
+                {...register("password", {
+                  required: {
+                    value: true,
+                    message: "Password is required",
+                  },
+                  minLength: {
+                    value: 6,
+                    message: "Password must be in 6 charachter",
+                  },
+                })}
+              />
+              <label className="label">
+                {errors.password?.type === "required" && (
+                  <span className="label-text-alt text-red-600">
+                    {errors.password.message}
+                  </span>
+                )}
+                {errors.password?.type === "minLength" && (
+                  <span className="label-text-alt text-red-600">
+                    {errors.password.message}
+                  </span>
+                )}
+              </label>
+            </div>
 
             <input
-              {...register("mail", { required: "Email Address is required" })}
-              aria-invalid={errors.mail ? "true" : "false"}
+              className="btn max-w-xs w-full text-white"
+              type="submit"
+              value="Login"
             />
-            {errors.mail && <p role="alert">{errors.mail?.message}</p>}
-
-            <input type="submit" />
           </form>
 
           <div className="divider">OR</div>
