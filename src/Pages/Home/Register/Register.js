@@ -2,14 +2,13 @@ import React from "react";
 import {
   useCreateUserWithEmailAndPassword,
   useSignInWithGoogle,
+  useUpdateProfile,
 } from "react-firebase-hooks/auth";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import auth from "../../../firebase.init";
 import Loading from "../Shared/Loading";
-const onSubmit = (data) => {
-  console.log(data);
-};
+
 const Register = () => {
   const [signInWithGoogle, GoogleUser, GoogleLoading, GoogleError] =
     useSignInWithGoogle(auth);
@@ -20,13 +19,16 @@ const Register = () => {
     formState: { errors },
     handleSubmit,
   } = useForm();
+  const [updateProfile, updating, updateError] = useUpdateProfile(auth);
+
   const navigate = useNavigate();
-  if (GoogleLoading || HookLoading) {
+  if (GoogleLoading || HookLoading || updating) {
     return <Loading></Loading>;
   }
 
-  const onSubmit = (data) => {
-    createUserWithEmailAndPassword(data.email, data.password);
+  const onSubmit = async (data) => {
+    await createUserWithEmailAndPassword(data.email, data.password);
+    await updateProfile({ displayName: data.name });
   };
 
   if (user || GoogleUser) {
@@ -34,11 +36,13 @@ const Register = () => {
   }
 
   let signUpError;
-  if (GoogleError || HookError) {
+  if (GoogleError || HookError || updateError) {
     signUpError = (
       <p className="mt-2 text-red-600">
         {" "}
-        <small>{GoogleError?.message || HookError?.message}</small>
+        <small>
+          {GoogleError?.message || HookError?.message || updateError?.message}
+        </small>
       </p>
     );
   }
