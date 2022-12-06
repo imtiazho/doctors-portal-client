@@ -1,17 +1,40 @@
 import React from "react";
-import { useSignInWithGoogle } from "react-firebase-hooks/auth";
+import {
+  useSignInWithEmailAndPassword,
+  useSignInWithGoogle,
+} from "react-firebase-hooks/auth";
 import auth from "../../firebase.init";
 import { useForm } from "react-hook-form";
+import Loading from "../Home/Shared/Loading";
 
 const Login = () => {
-  const [signInWithGoogle, user, loading, error] = useSignInWithGoogle(auth);
+  const [signInWithGoogle, GoogleUser, GoogleLoading, GoogleError] =
+    useSignInWithGoogle(auth);
+  const [signInWithEmailAndPassword, HookUser, HookLoading, HookError] =
+    useSignInWithEmailAndPassword(auth);
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm();
+
+  if (GoogleLoading || HookLoading) {
+    return <Loading></Loading>;
+  }
+
+  let signInError;
+  if (GoogleError || HookError) {
+    signInError = (
+      <p className="mt-2 text-red-600">
+        {" "}
+        <small>{GoogleError?.message || HookError?.message}</small>
+      </p>
+    );
+  }
+
   const onSubmit = (data) => {
     console.log(data);
+    signInWithEmailAndPassword(data.email, data.password);
   };
 
   return (
@@ -92,6 +115,7 @@ const Login = () => {
               type="submit"
               value="Login"
             />
+            {signInError}
           </form>
 
           <div className="divider">OR</div>
