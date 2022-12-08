@@ -2,15 +2,47 @@ import React from "react";
 import { format } from "date-fns";
 import { useAuthState } from "react-firebase-hooks/auth";
 import auth from "../../firebase.init";
+import toast from "react-hot-toast";
 
 const BookingModal = ({ treatment, date, setTreatment }) => {
-  const { name, slots } = treatment;
+  const { _id, name, slots } = treatment;
   const [user, loading, error] = useAuthState(auth);
 
   const handleBooking = (e) => {
     e.preventDefault();
     const slot = e.target.slot.value;
-    setTreatment(null);
+    const phoneNumber = e.target.phone.value;
+    const fotmatedDate = format(date, "PP");
+
+    const bookingData = {
+      treatmentId: _id,
+      treatmentName: name,
+      date: fotmatedDate,
+      slot: slot,
+      patient: user?.displayName,
+      patientEmail: user?.email,
+      patinentNumber: phoneNumber,
+    };
+
+    // Send Data to Database
+    fetch("http://localhost:5000/bookings", {
+      method: "POST", // or 'PUT'
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bookingData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          toast.success(`Appoinment is set, ${fotmatedDate} at ${slot}`);
+        } else {
+          toast.error(
+            `You have an appoinment on ${data?.booking?.date} at ${data?.booking?.slot}`
+          );
+        }
+        setTreatment(null);
+      });
   };
 
   return (
