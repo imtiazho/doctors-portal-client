@@ -4,7 +4,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import auth from "../../firebase.init";
 import toast from "react-hot-toast";
 
-const BookingModal = ({ treatment, date, setTreatment }) => {
+const BookingModal = ({ treatment, date, setTreatment, refetch }) => {
   const { _id, name, slots } = treatment;
   const [user, loading, error] = useAuthState(auth);
 
@@ -41,6 +41,7 @@ const BookingModal = ({ treatment, date, setTreatment }) => {
             `You have an appoinment on ${data?.booking?.date} at ${data?.booking?.slot}`
           );
         }
+        refetch();
         setTreatment(null);
       });
   };
