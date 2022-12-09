@@ -8,6 +8,11 @@ import Appoinment from "./Pages/Appoinment/Appoinment";
 import Register from "./Pages/Home/Register/Register";
 import RequirAuth from "./RequirAuth/RequirAuth";
 import { Toaster } from "react-hot-toast";
+import Dashboard from "./Pages/Dashboard/Dashboard";
+import MyAppoinment from "./Pages/Dashboard/MyAppoinment";
+import Review from "./Pages/Dashboard/Review";
+import AllUsers from "./Pages/Dashboard/AllUsers";
+import RequirAdmin from "./Pages/Login/RequireAdmin";
 
 function App() {
   return (
@@ -26,6 +31,25 @@ function App() {
             </RequirAuth>
           }
         ></Route>
+        <Route
+          path="/dashboard"
+          element={
+            <RequirAuth>
+              <Dashboard></Dashboard>
+            </RequirAuth>
+          }
+        >
+          <Route index element={<MyAppoinment></MyAppoinment>}></Route>
+          <Route path="review" element={<Review></Review>}></Route>
+          <Route
+            path="users"
+            element={
+              <RequirAdmin>
+                <AllUsers></AllUsers>
+              </RequirAdmin>
+            }
+          ></Route>
+        </Route>
       </Routes>
       <Toaster />
     </div>

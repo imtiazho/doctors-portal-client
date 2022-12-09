@@ -7,6 +7,7 @@ import {
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import auth from "../../../firebase.init";
+import useToken from "../../../Hook/useToken";
 import Loading from "../Shared/Loading";
 
 const Register = () => {
@@ -20,6 +21,9 @@ const Register = () => {
     handleSubmit,
   } = useForm();
   const [updateProfile, updating, updateError] = useUpdateProfile(auth);
+
+  const [token] = useToken(user || GoogleUser);
+
   const location = useLocation();
 
   const navigate = useNavigate();
@@ -33,7 +37,7 @@ const Register = () => {
   };
 
   let from = location.state?.from?.pathname || "/";
-  if (user || GoogleUser) {
+  if (token) {
     navigate(from, { replace: true });
   }
 
